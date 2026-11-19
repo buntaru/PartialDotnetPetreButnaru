@@ -1,0 +1,15 @@
+ETAPA 1-3: Vertical Slices + Rich Domain + Result/Error.
+
+Copiaza folderul src/RoomHub.Api peste src/RoomHub.Api din proiectul starter, DAR sterge intai folderele vechi:
+  Endpoints/  Services/  Models/  Middleware/
+  si inlocuieste Repositories/ cu cel din aceasta arhiva.
+Nu sterge Properties/launchSettings.json din starter.
+Nu schimba roomhub.http, .gitignore, README.md sau fisierele .md scrise de tine.
+
+Acest cod respecta cele 5 rute, ProblemDetails, R1-R9.
+Nu implementeaza inca ICommandHandler, EF Core/SQLite, Repository interfaces sau Unit of Work; acestea tin de etapele 4 si 5.
+Nu a fost compilat aici deoarece dotnet SDK nu este instalat in mediu. Verifica local:
+  dotnet build src/RoomHub.Api/RoomHub.Api.csproj
+  dotnet run --project src/RoomHub.Api/RoomHub.Api.csproj
+
+Important: verifica manual comportamentul in roomhub.http, inclusiv R9, si completeaza singur AI-LOG.md.

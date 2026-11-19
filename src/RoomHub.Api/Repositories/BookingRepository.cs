@@ -1,34 +1,14 @@
-using RoomHub.Api.Models;
+using RoomHub.Api.Domain.Bookings;
 
 namespace RoomHub.Api.Repositories;
 
-// Starter: in-memory data. It is lost when the application restarts.
-public class BookingRepository
+public sealed class BookingRepository
 {
-    private readonly List<Booking> _bookings = new();
+    private readonly List<Booking> _bookings = [];
     private readonly object _lock = new();
 
-    public void Add(Booking booking)
-    {
-        lock (_lock)
-        {
-            _bookings.Add(booking);
-        }
-    }
-
-    public Booking? Get(Guid id)
-    {
-        lock (_lock)
-        {
-            return _bookings.FirstOrDefault(b => b.Id == id);
-        }
-    }
-
-    public List<Booking> ListForRoom(Guid roomId)
-    {
-        lock (_lock)
-        {
-            return _bookings.Where(b => b.RoomId == roomId).ToList();
-        }
-    }
+    public void Add(Booking booking) { lock (_lock) { _bookings.Add(booking); } }
+    public Booking? Get(Guid id) { lock (_lock) { return _bookings.FirstOrDefault(b => b.Id == id); } }
+    // Global list is needed for R9 across rooms. Replace it with a targeted query in EF Core.
+    public List<Booking> GetAll() { lock (_lock) { return _bookings.ToList(); } }
 }
