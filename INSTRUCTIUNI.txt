@@ -1,15 +1,14 @@
-ETAPA 1-3: Vertical Slices + Rich Domain + Result/Error.
+RoomHub — CQRS + thin endpoints (cerinta 4)
 
-Copiaza folderul src/RoomHub.Api peste src/RoomHub.Api din proiectul starter, DAR sterge intai folderele vechi:
-  Endpoints/  Services/  Models/  Middleware/
-  si inlocuieste Repositories/ cu cel din aceasta arhiva.
-Nu sterge Properties/launchSettings.json din starter.
-Nu schimba roomhub.http, .gitignore, README.md sau fisierele .md scrise de tine.
+1. Din radacina roomhub-starter ruleaza:
+   unzip -o ~/Downloads/RoomHub_CQRS_etapa_4.zip -d .
 
-Acest cod respecta cele 5 rute, ProblemDetails, R1-R9.
-Nu implementeaza inca ICommandHandler, EF Core/SQLite, Repository interfaces sau Unit of Work; acestea tin de etapele 4 si 5.
-Nu a fost compilat aici deoarece dotnet SDK nu este instalat in mediu. Verifica local:
-  dotnet build src/RoomHub.Api/RoomHub.Api.csproj
-  dotnet run --project src/RoomHub.Api/RoomHub.Api.csproj
+2. Verifica:
+   dotnet build src/RoomHub.Api/RoomHub.Api.csproj
+   dotnet run --project src/RoomHub.Api --urls http://localhost:5000
 
-Important: verifica manual comportamentul in roomhub.http, inclusiv R9, si completeaza singur AI-LOG.md.
+3. Testeaza endpoint-urile HTTP. Nu sterge alte foldere si nu modifica fisierele .md automat.
+4. Completeaza personal AI-LOG.md, DECISIONS.md si BUGS.md.
+5. Dupa teste: git add src && git commit -m "Implement CQRS handlers and thin endpoints" && git push
+
+NOTA: acest ZIP pornește de la etapa 1-3 și include R10 si R11 in Domain/Bookings/Booking.cs. Nu introduce EF Core (cerinta 5).

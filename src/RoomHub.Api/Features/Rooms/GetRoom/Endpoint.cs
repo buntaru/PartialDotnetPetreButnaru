@@ -1,6 +1,5 @@
-using RoomHub.Api.Domain.Common;
+using RoomHub.Api.Domain.Rooms;
 using RoomHub.Api.Features.Shared;
-using RoomHub.Api.Repositories;
 
 namespace RoomHub.Api.Features.Rooms.GetRoom;
 
@@ -10,11 +9,11 @@ public static class Endpoint
 {
     public static void Map(RouteGroupBuilder group) => group.MapGet("/{id:guid}", Handle);
 
-    private static IResult Handle(Guid id, RoomRepository rooms)
+    private static IResult Handle(Guid id, IQueryHandler<Query, Room> handler)
     {
-        var room = rooms.Get(id);
-        if (room is null)
-            return HttpErrorMapping.ToProblem(new Error(ErrorType.NotFound, "The room does not exist."));
+        var result = handler.Handle(new Query(id));
+        if (!result.IsSuccess) return HttpErrorMapping.ToProblem(result.Error!);
+        var room = result.Value!;
         return Results.Ok(new Response(room.Id, room.Name, room.Capacity));
     }
 }

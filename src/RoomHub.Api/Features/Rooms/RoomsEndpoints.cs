@@ -7,7 +7,7 @@ public static class RoomsEndpoints
         var group = app.MapGroup("/api/rooms").WithTags("Rooms");
         CreateRoom.Endpoint.Map(group);
         GetRoom.Endpoint.Map(group);
-        CreateBooking.Endpoint.Map(group);
+        RoomHub.Api.Features.Bookings.CreateBooking.Endpoint.Map(group);
         return app;
     }
 }

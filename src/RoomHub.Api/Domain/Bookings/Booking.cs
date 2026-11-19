@@ -31,15 +31,11 @@ public sealed class Booking
             return Result<Booking>.Failure(new Error(ErrorType.Validation, "The room does not have enough seats."));
         if (startUtc < timeProvider.GetUtcNow().UtcDateTime)
             return Result<Booking>.Failure(new Error(ErrorType.Validation, "A booking cannot start in the past."));
-        var maxDuration = room.Capacity > 10
-            ? TimeSpan.FromHours(2)
-            : TimeSpan.FromHours(4);
-
+        // R6 + R10: larger rooms have a stricter duration limit.
+        var maxDuration = room.Capacity > 10 ? TimeSpan.FromHours(2) : TimeSpan.FromHours(4);
         if (endUtc - startUtc > maxDuration)
-            return Result<Booking>.Failure(
-                new Error(
-                    ErrorType.Validation,
-                    $"The maximum booking duration is {maxDuration.TotalHours} hours."));
+            return Result<Booking>.Failure(new Error(ErrorType.Validation,
+                $"The maximum booking duration is {maxDuration.TotalHours} hours."));
 
         // Half-open intervals [start, end): touching intervals are allowed.
         var active = existingBookings.Where(b => b.Status == BookingStatus.Active).ToList();
@@ -64,19 +60,14 @@ public sealed class Booking
     public Result<Booking> Cancel(TimeProvider timeProvider)
     {
         if (Status == BookingStatus.Cancelled)
-            return Result<Booking>.Failure(
-                new Error(ErrorType.Conflict,
-                    "Booking is already cancelled."));
+            return Result<Booking>.Failure(new Error(ErrorType.Conflict, "Booking is already cancelled."));
 
-        var now = timeProvider.GetUtcNow().UtcDateTime;
-
-        if (StartUtc - now < TimeSpan.FromMinutes(60))
-            return Result<Booking>.Failure(
-                new Error(ErrorType.Conflict,
-                    "Booking can only be cancelled at least 60 minutes before start."));
+        // R11: cancellation is allowed until exactly 60 minutes before start.
+        if (StartUtc - timeProvider.GetUtcNow().UtcDateTime < TimeSpan.FromMinutes(60))
+            return Result<Booking>.Failure(new Error(ErrorType.Conflict,
+                "Booking can only be cancelled at least 60 minutes before start."));
 
         Status = BookingStatus.Cancelled;
-
         return Result<Booking>.Success(this);
     }
 }

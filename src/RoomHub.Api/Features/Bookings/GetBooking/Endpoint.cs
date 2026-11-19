@@ -1,6 +1,5 @@
-using RoomHub.Api.Domain.Common;
+using RoomHub.Api.Domain.Bookings;
 using RoomHub.Api.Features.Shared;
-using RoomHub.Api.Repositories;
 
 namespace RoomHub.Api.Features.Bookings.GetBooking;
 
@@ -11,13 +10,12 @@ public static class Endpoint
 {
     public static void Map(RouteGroupBuilder group) => group.MapGet("/{id:guid}", Handle);
 
-    private static IResult Handle(Guid id, BookingRepository bookings)
+    private static IResult Handle(Guid id, IQueryHandler<Query, Booking> handler)
     {
-        var b = bookings.Get(id);
-        if (b is null)
-            return HttpErrorMapping.ToProblem(new Error(ErrorType.NotFound, "The booking does not exist."));
-
-        return Results.Ok(new Response(b.Id, b.RoomId, b.BookedBy,
-            b.StartUtc, b.EndUtc, b.Attendees, b.Status.ToString()));
+        var result = handler.Handle(new Query(id));
+        if (!result.IsSuccess) return HttpErrorMapping.ToProblem(result.Error!);
+        var booking = result.Value!;
+        return Results.Ok(new Response(booking.Id, booking.RoomId, booking.BookedBy,
+            booking.StartUtc, booking.EndUtc, booking.Attendees, booking.Status.ToString()));
     }
 }
